@@ -129,7 +129,7 @@ const Profile: React.FC = () => {
       <ToastContainer />
       <Box
         sx={{
-          minHeight: '80vh',
+          minHeight: '90vh',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -146,6 +146,7 @@ const Profile: React.FC = () => {
             width: '100%',
             maxWidth: 450,
             textAlign: 'center',
+            borderTop: '6px solid #3b30c8'
           }}
         >
           <Typography
@@ -173,7 +174,7 @@ const Profile: React.FC = () => {
               variant="contained"
               color="primary"
               onClick={() => setShowEditModal(true)}
-              sx={{ textTransform: 'none' }}
+              sx={{ backgroundColor: '#3b30c8', color: '#fff' }}
             >
               Edit
             </Button>
@@ -191,7 +192,7 @@ const Profile: React.FC = () => {
       </Box>
 
       <Dialog open={showEditModal} onClose={closeModal} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ color: '#3b30c8' }}>Edit Profile</DialogTitle>
+        <DialogTitle align='center' sx={{ color: '#3b30c8' }}>Edit Profile</DialogTitle>
         <DialogContent dividers>
           <Stack spacing={2} mt={1}>
             <TextField
@@ -233,7 +234,7 @@ const Profile: React.FC = () => {
           <Button onClick={closeModal} color="inherit">
             Cancel
           </Button>
-          <Button onClick={handleSaveEdit} variant="contained" color="primary">
+          <Button onClick={handleSaveEdit} variant="contained" sx={{ backgroundColor: '#3b30c8', color: '#fff' }}>
             Save
           </Button>
         </DialogActions>

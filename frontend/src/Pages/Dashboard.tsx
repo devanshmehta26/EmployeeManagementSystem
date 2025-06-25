@@ -139,8 +139,19 @@ const Dashboard = () => {
             count={totalPages}
             page={currentPage}
             onChange={(e, value) => setCurrentPage(value)}
-            color="primary"
             shape="rounded"
+             sx={{
+              '& .MuiPaginationItem-root': {
+                color: '#3b30c8',        
+                borderColor: '#3b30c8',   
+              },
+              '& .MuiPaginationItem-root.Mui-selected': {
+                backgroundColor: '#3b30c8', 
+                color: '#fff',             
+                '&:hover': {
+                  backgroundColor: '#3b30c8',
+                },
+              }}}
           />
         </Stack>
     </Box>

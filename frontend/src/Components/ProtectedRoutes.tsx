@@ -17,7 +17,6 @@ const ProtectedRoute: React.FC = () => {
           }
         );
         setIsAuth(true)
-        console.log('Employee data:', response.data, isAuth);
       } catch {
         setIsAuth(false)
       }

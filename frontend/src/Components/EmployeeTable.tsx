@@ -31,10 +31,10 @@ const EmployeeTable: React.FC = () => {
         <Table aria-label="employee table">
           <TableHead>
             <TableRow sx={{ backgroundColor: '#3b30c8' }}>
-              <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Name</TableCell>
-              <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Email</TableCell>
-              <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Designation</TableCell>
-              <TableCell sx={{ color: '#fff', fontWeight: 'bold' }}>Salary</TableCell>
+              <TableCell align='center' sx={{ color: '#fff', fontWeight: 'bold'}}>Name</TableCell>
+              <TableCell align='center' sx={{ color: '#fff', fontWeight: 'bold'}}>Email</TableCell>
+              <TableCell align='center' sx={{ color: '#fff', fontWeight: 'bold' }}>Designation</TableCell>
+              <TableCell align='center' sx={{ color: '#fff', fontWeight: 'bold' }}>Salary</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -48,12 +48,10 @@ const EmployeeTable: React.FC = () => {
                     '&:hover': { backgroundColor: '#eef2ff' },
                   }}
                 >
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.designation}</TableCell>
-                  <TableCell sx={{ fontWeight: 500, color: '#3b30c8' }}>
-                    ₹{user.salary.toLocaleString()}
-                  </TableCell>
+                  <TableCell align='center'  sx={{ fontWeight: 900, color: 'black', borderRight:'1px solid #ddd'}} >{user.name}</TableCell>
+                  <TableCell align='center'  sx={{ fontWeight: 500, color: 'black', borderRight:'1px solid #ddd'}}>{user.email}</TableCell>
+                  <TableCell align='center' sx={{ fontWeight: 500, color: 'black', borderRight:'1px solid #ddd'}}>{user.designation}</TableCell>
+                  <TableCell align='center' sx={{ fontWeight: 500, color: 'black' }}>₹{user.salary.toLocaleString()}</TableCell>
                 </TableRow>
               ))
             ) : (
