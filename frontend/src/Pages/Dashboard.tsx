@@ -64,7 +64,8 @@ const Dashboard = () => {
       const fetchEmployees = async () => {
         try {
           const response = await axios.get<EmployeesResponse>(
-            `http://localhost:4000/api/employees?page=${currentPage}&limit=${limit}&search=${searchTerm}`
+            `http://localhost:4000/api/employees?page=${currentPage}&limit=${limit}&search=${searchTerm}`,
+             {withCredentials: true}
           );
           dispatch(setEmployees(response.data.employees));
           dispatch(setTotalPages(response.data.noOfPages));

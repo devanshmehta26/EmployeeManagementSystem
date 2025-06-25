@@ -6,7 +6,7 @@ const {getAllEmployees, register, updateUser, deleteUser, login, logout, getCurr
 router.post("/register",register)
 router.post("/login",login)
 
-router.get("/",getAllEmployees);
+router.get("/",authenticate,getAllEmployees);
 router.post("/user",authenticate,getCurrentUser)
 router.get("/profile",authenticate,getUserProfile)
 router.put("/updateUser",authenticate,updateUser)
