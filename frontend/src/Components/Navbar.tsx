@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
           <Link
             to="/dashboard"
             className={`transition duration-150 ease-in-out px-3 py-2 rounded-md text-sm font-medium 
-              ${location.pathname === '/' ? 'bg-white text-indigo-700 font-semibold' : 'hover:bg-indigo-600 hover:text-white'}`}
+              ${location.pathname === '/dashboard' ? 'bg-white text-indigo-700 font-semibold' : 'hover:bg-indigo-600 hover:text-white'}`}
           >
             Dashboard
           </Link>
