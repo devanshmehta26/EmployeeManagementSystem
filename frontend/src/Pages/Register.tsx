@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { api } from "../utils/api";
 
 import {
   Box,
@@ -55,12 +56,12 @@ const Register: React.FC = () => {
       return;
     }
 
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/api/employees/register",
-        form,
-        { withCredentials: true }
-      );
+    try { 
+      const payload = {
+        ...form,
+        salary: Number(form.salary),
+      };
+      const response = await api.register(payload);
       navigate("/dashboard");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Signup failed");

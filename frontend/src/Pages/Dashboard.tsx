@@ -15,6 +15,7 @@ import {
   Stack
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
+import { api } from '../utils/api';
 
 interface Employee {
   id: number;
@@ -45,10 +46,7 @@ const Dashboard = () => {
  useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(
-          'http://localhost:4000/api/employees/profile',
-          { withCredentials: true }
-        );
+        const response = await api.fetchProfile();
         dispatch(setUser(response.data));
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -63,10 +61,7 @@ const Dashboard = () => {
     const delay = setTimeout(() => {
       const fetchEmployees = async () => {
         try {
-          const response = await axios.get<EmployeesResponse>(
-            `http://localhost:4000/api/employees?page=${currentPage}&limit=${limit}&search=${searchTerm}`,
-             {withCredentials: true}
-          );
+          const response = await api.fetchEmployees(currentPage, limit, searchTerm);
           dispatch(setEmployees(response.data.employees));
           dispatch(setTotalPages(response.data.noOfPages));
         } catch (error) {

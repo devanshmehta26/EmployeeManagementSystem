@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-
+import { api } from "../utils/api";
 import {
   Box,
   Button,
@@ -28,13 +28,7 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:4000/api/employees/login', {
-        email,
-        password,
-      }, {
-        withCredentials: true
-      });
-      console.log('Login successful:', response.data);
+      const response = await api.login({ email, password });
       navigate("/dashboard");
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Login failed');

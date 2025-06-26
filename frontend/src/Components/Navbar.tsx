@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { api } from '../utils/api';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
@@ -9,11 +10,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        'http://localhost:4000/api/employees/logout',
-        {},
-        { withCredentials: true }
-      );
+      await api.logout();
       navigate('/login');
     } catch (error: any) {
       if (error.response) {

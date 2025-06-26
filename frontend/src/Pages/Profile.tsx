@@ -16,6 +16,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../Store/Store';
 import { setUser, clearUser } from '../Slice/AuthSlice';
+import { api } from '../utils/api';
 
 const Profile: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -62,11 +63,7 @@ const Profile: React.FC = () => {
         ...(formData.password ? { password: formData.password } : {}),
       };
 
-      const response = await axios.put(
-        'http://localhost:4000/api/employees/updateUser',
-        updated,
-        { withCredentials: true }
-      );
+     const response = await api.updateUser(updated);
 
       dispatch(setUser(response.data.employee));
       setShowEditModal(false);
@@ -79,9 +76,7 @@ const Profile: React.FC = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete('http://localhost:4000/api/employees/deleteUser', {
-        withCredentials: true,
-      });
+      await api.deleteUser();
       dispatch(clearUser());
       toast.success('User deleted');
       setShowDeleteModal(false);
