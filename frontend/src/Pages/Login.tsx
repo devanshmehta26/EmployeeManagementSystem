@@ -16,24 +16,39 @@ import {
 
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
+import { useFormHandler } from "../Hooks/useFormHandler";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      const response = await api.login({ email, password });
-      navigate("/dashboard");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Login failed');
-    }
-  };
+  const {
+    values: form,
+    handleChange,
+    handleSubmit,
+  } = useFormHandler({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validate: (form) => {
+      if (!form.email || !form.password) {
+        return "Please enter both email and password.";
+      }
+      if (!/\S+@\S+\.\S+/.test(form.email)) {
+        return "Please enter a valid email address.";
+      }
+      return null;
+    },
+    onSubmit: async (form) => {
+      try {
+        await api.login(form);
+        navigate("/dashboard");
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || "Login failed");
+      }
+    },
+  });
 
   return (
     <Box
@@ -88,19 +103,26 @@ const Login: React.FC = () => {
 
         <Box
           component="form"
-          onSubmit={handleSubmit}
-          sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
+          onSubmit={async (e) => {
+            try {
+              await handleSubmit(e);
+            } catch (msg) {
+              if (typeof msg === "string") toast.error(msg);
+            }
+          }}
+          sx={{ display: "flex", flexDirection: "column", gap: 3 }}
           noValidate
           autoComplete="off"
         >
           <TextField
             label="Email"
+            name="email"
             type="email"
             variant="outlined"
             required
             fullWidth
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={form.email}
+            onChange={handleChange}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -112,12 +134,13 @@ const Login: React.FC = () => {
 
           <TextField
             label="Password"
+            name="password"
             type="password"
             variant="outlined"
             required
             fullWidth
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={form.password}
+            onChange={handleChange}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { api } from "../utils/api";
-
+import { useFormHandler } from "../Hooks/useFormHandler";
 import {
   Box,
   Button,
@@ -18,43 +18,39 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    designation: "",
-    salary: "",
-  });
+  const {values: form, handleChange, handleSubmit} = useFormHandler({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      designation: "",
+      salary: "",
+    },
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  validate: (form) => {
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { name, email, password, designation, salary } = form;
-
-    if (!name || !email || !password || !designation || !salary) {
+    if (!form.name || !form.email || !form.password || !form.designation || !form.salary) {
       toast.error("Please fill out all the fields.");
-      return;
+      return "Please fill out all the fields.";
     }
 
-    if (password.length < 8) {
+    if (form.password.length < 8) {
       toast.error("Password must be at least 8 characters.");
-      return;
+      return  "Password must be at least 8 characters.";
     }
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
+    if (!/\S+@\S+\.\S+/.test(form.email)) {
       toast.error("Please enter a valid email.");
-      return;
+      return "Please enter a valid email.";
     }
 
-    if (Number(salary) <= 0) {
+    if (Number(form.salary) <= 0) {
       toast.error("Salary must be greater than 0.");
-      return;
+      return  "Salary must be greater than 0.";
     }
+    return null;
+  },
+  onSubmit: async (form) => {
 
     try { 
       const payload = {
@@ -66,7 +62,8 @@ const Register: React.FC = () => {
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Signup failed");
     }
-  };
+    }
+  });
 
   return (
     <Box
@@ -105,7 +102,13 @@ const Register: React.FC = () => {
           component="form"
           noValidate
           autoComplete="off"
-          onSubmit={handleSubmit}
+          onSubmit={async (e) => {
+            try {
+              await handleSubmit(e);
+            } catch (msg) {
+              if (typeof msg === "string") toast.error(msg);
+            }
+          }}
           sx={{ display: "flex", flexDirection: "column", gap: 3 }}
         >
           <TextField

@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../Store/Store';
 import { setUser, clearUser } from '../Slice/AuthSlice';
 import { api } from '../utils/api';
+import { useFormHandler } from '../Hooks/useFormHandler';
 
 const Profile: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,43 +25,43 @@ const Profile: React.FC = () => {
 
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const [formData, setFormData] = useState({
-    name: user?.name || '',
-    designation: user?.designation || '',
-    salary: user?.salary.toString() || '',
-    password: '',
-  });
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.name,
-        designation: user.designation,
-        salary: user.salary.toString(),
-        password: '',
-      });
-    }
-  }, [user]);
-
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSaveEdit = async () => {
-    if (!formData.name.trim()) return toast.error('Please enter your name.');
-    if (!formData.designation.trim()) return toast.error('Please enter your designation.');
-    if (!formData.salary || isNaN(Number(formData.salary)) || Number(formData.salary) <= 0) {
-      return toast.error('Salary must be a positive number.');
+const {
+    values: form,
+    setValues,
+    handleChange,
+    handleSubmit,
+  } = useFormHandler({
+    initialValues: {
+      name: user?.name || '',
+      designation: user?.designation || '',
+      salary: user?.salary?.toString() || '',
+      password: '',
+    },
+    validate: (form) => {
+    if (!form.name.trim()) {      
+      toast.error('Please enter your name.'); 
+      return "";
+    }    
+   if (!form.designation.trim())  {
+      toast.error('Please enter your designation.'); 
+      return "";
+   }
+    if (!form.salary || isNaN(Number(form.salary)) || Number(form.salary) <= 0) {
+      toast.error('Salary must be a positive number.'); 
+      return "";
     }
-
+    return null;
+  },
+  onSubmit: async (form) => {
     try {
       const updated = {
-        name: formData.name,
-        designation: formData.designation,
-        salary: Number(formData.salary),
-        ...(formData.password ? { password: formData.password } : {}),
+        name: form.name,
+        designation: form.designation,
+        salary: Number(form.salary),
+        ...(form.password ? { password: form.password } : {}),
       };
 
      const response = await api.updateUser(updated);
@@ -72,7 +73,20 @@ const Profile: React.FC = () => {
       console.error('Error updating profile:', error);
       toast.error('Failed to update profile');
     }
-  };
+  }
+});
+
+
+  useEffect(() => {
+    if (user) {
+      setValues({
+        name: user.name,
+        designation: user.designation,
+        salary: user.salary.toString(),
+        password: '',
+      });
+    }
+  }, [user, setValues]);
 
   const handleDelete = async () => {
     try {
@@ -91,7 +105,7 @@ const Profile: React.FC = () => {
     setShowEditModal(false);
     setShowDeleteModal(false);
     if (user) {
-      setFormData({
+      setValues({
         name: user.name,
         designation: user.designation,
         salary: user.salary.toString(),
@@ -194,23 +208,23 @@ const Profile: React.FC = () => {
               label="Name"
               name="name"
               fullWidth
-              value={formData.name}
-              onChange={handleInputChange}
+              value={form.name}
+              onChange={handleChange}
               autoFocus
             />
             <TextField
               label="Designation"
               name="designation"
               fullWidth
-              value={formData.designation}
-              onChange={handleInputChange}
+              value={form.designation}
+              onChange={handleChange}
             />
             <TextField
               label="Salary"
               name="salary"
               fullWidth
-              value={formData.salary}
-              onChange={handleInputChange}
+              value={form.salary}
+              onChange={handleChange}
               type="number"
               inputProps={{ min: 0 }}
             />
@@ -218,8 +232,8 @@ const Profile: React.FC = () => {
               label="Password"
               name="password"
               fullWidth
-              value={formData.password}
-              onChange={handleInputChange}
+              value={form.password}
+              onChange={handleChange}
               type="password"
               helperText="Leave blank to keep current password"
             />
@@ -229,7 +243,17 @@ const Profile: React.FC = () => {
           <Button onClick={closeModal} color="inherit">
             Cancel
           </Button>
-          <Button onClick={handleSaveEdit} variant="contained" sx={{ backgroundColor: '#3b30c8', color: '#fff' }}>
+          <Button
+            onClick={async (e) => {
+              try {
+                await handleSubmit(e);
+              } catch (msg) {
+                if (typeof msg === 'string') toast.error(msg);
+              }
+            }}
+            variant="contained"
+            sx={{ backgroundColor: '#3b30c8', color: '#fff' }}
+          >
             Save
           </Button>
         </DialogActions>
