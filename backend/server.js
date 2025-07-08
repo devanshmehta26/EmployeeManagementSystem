@@ -5,6 +5,9 @@ const cookieParser = require("cookie-parser");
 const app=express();
 const employeeRoutes=require("./routes/EmployeeRoutes")
 const errorHandler=require('./middleware/ErrorHandler')
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
 
 dotenv.config();
 
@@ -17,9 +20,12 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use('/api-documentation', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/employees", employeeRoutes);
 app.use(errorHandler);
 
-app.listen(PORT,()=>{
+const server=app.listen(PORT,()=>{
     console.log(`listening on port number ${PORT}`);
 })
+
+module.exports = {app,server};

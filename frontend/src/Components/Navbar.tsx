@@ -34,6 +34,7 @@ const Navbar: React.FC = () => {
             to="/dashboard"
             className={`transition duration-150 ease-in-out px-3 py-2 rounded-md text-sm font-medium 
               ${location.pathname === '/dashboard' ? 'bg-white text-indigo-700 font-semibold' : 'hover:bg-indigo-600 hover:text-white'}`}
+              data-testid="desktop-dashboard-link"  
           >
             Dashboard
           </Link>
@@ -47,6 +48,7 @@ const Navbar: React.FC = () => {
           </Link>
 
           <button
+            data-testid="desktop-logout-button"
             onClick={handleLogout}
             className="hover:bg-red-600 transition duration-150 px-4 py-2 rounded-md text-sm font-medium"
           >
@@ -69,6 +71,7 @@ const Navbar: React.FC = () => {
             to="/dashboard"
             onClick={() => setIsMenuOpen(false)}
             className="block bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md text-sm"
+            data-testid="mobile-dashboard-link"
           >
             Dashboard
           </Link>
@@ -80,6 +83,7 @@ const Navbar: React.FC = () => {
             My Profile
           </Link>
           <button
+            data-testid="mobile-logout-button"
             onClick={() => {
               setIsMenuOpen(false);
               handleLogout();

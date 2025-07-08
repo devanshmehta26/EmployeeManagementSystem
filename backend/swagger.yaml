@@ -1,0 +1,256 @@
+openapi: 3.0.3
+info:
+  title: Employee Management API
+  description: API for managing employees (register, login, profile, update, delete, etc.)
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:4000/api/employees
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+
+  schemas:
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        designation:
+          type: string
+        salary:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    RegisterRequest:
+      type: object
+      required: [name, email, designation, salary, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        designation:
+          type: string
+        salary:
+          type: number
+        password:
+          type: string
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        designation:
+          type: string
+        salary:
+          type: number
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        employee:
+          $ref: '#/components/schemas/Employee'
+
+paths:
+
+  /register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Employee created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Validation error
+
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Login employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+
+  /logout:
+    post:
+      tags:
+        - Employees
+      summary: Logout employee
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Logout successful
+
+  /:
+    get:
+      tags:
+        - Employees
+      summary: Get all employees
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated list of employees
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+                  totalEmployees:
+                    type: integer
+                  noOfPages:
+                    type: integer
+                  employees:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Employee'
+        '400':
+          description: Invalid query parameters
+
+  /user:
+    post:
+      tags:
+        - Auth
+      summary: Get current user from cookie
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  email:
+                    type: string
+        '401':
+          description: Not authenticated
+
+  /profile:
+    get:
+      tags:
+        - Employees
+      summary: Get full profile of authenticated user
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: User profile data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: User not found
+
+  /updateUser:
+    put:
+      tags:
+        - Employees
+      summary: Update employee's own profile
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Employee updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid input or password too short
+        '404':
+          description: User not found
+
+  /deleteUser:
+    delete:
+      tags:
+        - Employees
+      summary: Delete authenticated employee
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Deleted successfully
+        '404':
+          description: User not found
+

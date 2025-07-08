@@ -49,7 +49,6 @@ const Dashboard = () => {
         const response = await api.fetchProfile();
         dispatch(setUser(response.data));
       } catch (error) {
-        console.error('Error fetching profile:', error);
         toast.error('Failed to load user profile');
       }
     };
@@ -109,7 +108,7 @@ const Dashboard = () => {
             sx={{ width: { xs: '100%', sm: 300 } }}
             InputProps={{
               endAdornment: searchTerm && (
-                <IconButton onClick={clearSearch}>
+                <IconButton onClick={clearSearch} data-testid="clear-search-button">
                   <ClearIcon />
                 </IconButton>
               )
